@@ -61,14 +61,18 @@ export function setSessionCookie(c: Context, token: string, expiresAt: Date): vo
   setCookie(c, SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "Lax",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     path: "/",
     expires: expiresAt,
   });
 }
 
 export function clearSessionCookie(c: Context): void {
-  deleteCookie(c, SESSION_COOKIE_NAME, { path: "/" });
+  deleteCookie(c, SESSION_COOKIE_NAME, {
+    path: "/",
+    secure: true,
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  });
 }
 
 export function getSessionToken(c: Context): string | undefined {
