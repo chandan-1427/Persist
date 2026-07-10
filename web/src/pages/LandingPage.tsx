@@ -1,17 +1,22 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { getMe, signout, type User } from '@/lib/auth'
+import { ApiError } from '@/lib/api'
 
 type ServerStatus = 'checking' | 'connected' | 'error'
 
 export function LandingPage() {
+  const navigate = useNavigate()
   const [status, setStatus] = useState<ServerStatus>('checking')
+  const [user, setUser] = useState<User | null>(null)
+  const [userLoading, setUserLoading] = useState(true)
+  const [signingOut, setSigningOut] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
-
     const API_URL = import.meta.env.VITE_API_URL
 
-    fetch(`${API_URL}/api/health`, { signal: controller.signal, })
+    fetch(`${API_URL}/api/health`, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error('Server responded with an error')
         return res.json()
@@ -21,6 +26,32 @@ export function LandingPage() {
 
     return () => controller.abort()
   }, [])
+
+  useEffect(() => {
+    getMe()
+      .then(({ user }) => setUser(user))
+      .catch((err) => {
+        // 401 just means "not signed in" — not an error worth surfacing
+        if (!(err instanceof ApiError && err.status === 401)) {
+          console.error(err)
+        }
+        setUser(null)
+      })
+      .finally(() => setUserLoading(false))
+  }, [])
+
+  const handleSignout = async () => {
+    setSigningOut(true)
+    try {
+      await signout()
+      setUser(null)
+      navigate('/')
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSigningOut(false)
+    }
+  }
 
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 text-text">
@@ -43,6 +74,12 @@ export function LandingPage() {
         </span>
       </div>
 
+      {!userLoading && user && (
+        <p className="mt-4 text-sm text-white/60">
+          Signed in as <span className="text-text font-medium">{user.username}</span> ({user.email})
+        </p>
+      )}
+
       <p className="mt-4 text-white/70">
         Set a timer for any duration — an hour, a week, even 21 days — and it keeps running
         no matter what. Close the tab, restart your phone, come back next month: the timer
@@ -55,12 +92,24 @@ export function LandingPage() {
       </p>
 
       <div className="mt-8 flex gap-4">
-        <Link to="/signup" className="font-medium text-text border border-[#1C1C9F] py-2 px-3 bg-[#1C1C3A] hover:bg-[#1C1C8C]">
-          Sign up
-        </Link>
-        <Link to="/signin" className="font-medium text-text border border-[#7C1C1C] py-2 px-3 bg-[#2C1C1A] hover:bg-[#8C1C1C]">
-          Sign in
-        </Link>
+        {userLoading ? null : user ? (
+          <button
+            onClick={handleSignout}
+            disabled={signingOut}
+            className="font-medium text-text border border-[#7C1C1C] py-2 px-3 bg-[#2C1C1A] hover:bg-[#8C1C1C] disabled:opacity-50"
+          >
+            {signingOut ? 'Signing out...' : 'Sign out'}
+          </button>
+        ) : (
+          <>
+            <Link to="/signup" className="font-medium text-text border border-[#1C1C9F] py-2 px-3 bg-[#1C1C3A] hover:bg-[#1C1C8C]">
+              Sign up
+            </Link>
+            <Link to="/signin" className="font-medium text-text border border-[#7C1C1C] py-2 px-3 bg-[#2C1C1A] hover:bg-[#8C1C1C]">
+              Sign in
+            </Link>
+          </>
+        )}
       </div>
     </div>
   )

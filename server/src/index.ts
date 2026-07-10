@@ -6,16 +6,19 @@ import { sql } from 'drizzle-orm'
 
 import { db } from './db/index.js'
 
+import type { AppVariables } from './types/hono.js'
+
 import { requestLogger } from "./middleware/logger.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { authRoutes } from "./routes/auth.js";
 
-const app = new Hono()
+const app = new Hono<{ Variables: AppVariables }>();
 
 app.use(
   '/api/*',
   cors({
     origin: process.env.CLIENT,
+    credentials: true
   })
 )
 
@@ -35,7 +38,7 @@ app.get('/api/db/health', async (c) => {
   return c.json({ status: 'ok', db: result[0] ?? null })
 })
 
-app.route("/auth", authRoutes);
+app.route("/api/auth", authRoutes);
 
 serve({
   fetch: app.fetch,

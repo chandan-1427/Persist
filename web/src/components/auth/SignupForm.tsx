@@ -1,24 +1,43 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from 'react-router-dom'
 import { signupSchema, type SignupFormData } from '@/schemas/signupSchema'
 import { cardClass, submitButtonClass } from '@/styles/formStyles'
 import { FormField } from '@/components/form/FormField'
 import { PasswordField } from '@/components/form/PasswordField'
 import { Link } from 'react-router-dom'
+import { signup } from '@/lib/auth'
+import { ApiError } from '@/lib/api'
+import { useState } from 'react'
 
 export function SignupForm() {
+  const navigate = useNavigate()
+  const [formError, setFormError] = useState<string | null>(null)
+
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   })
 
   const onSubmit = async (data: SignupFormData) => {
-    // TODO: replace with real API call
-    console.log('Signup data:', data)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    setFormError(null)
+    try {
+      const { username, email, password } = data
+      await signup({ username, email, password })
+      navigate('/signin') // adjust to wherever a logged-in user should land
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        // matches your deliberately-vague duplicate-account message
+        setError('email', { message: err.message })
+        setError('username', { message: err.message })
+        return
+      }
+      setFormError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.')
+    }
   }
 
   return (
@@ -28,16 +47,17 @@ export function SignupForm() {
           <h1 className="text-xl font-semibold">Create an account</h1>
           <p className="text-sm text-white/50">Get started in a few seconds</p>
         </div>
-
-        <Link
-          to="/"
-          className="text-sm text-white/40 hover:text-white/70"
-        >
+        <Link to="/" className="text-sm text-white/40 hover:text-white/70">
           Back
         </Link>
       </div>
 
       <fieldset disabled={isSubmitting} className="space-y-5">
+        {formError && (
+          <p role="alert" className="text-sm text-red-400">
+            {formError}
+          </p>
+        )}
 
         <FormField
           id="username"
@@ -74,7 +94,6 @@ export function SignupForm() {
         <button type="submit" disabled={isSubmitting} className={submitButtonClass}>
           {isSubmitting ? 'Signing up...' : 'Sign up'}
         </button>
-
       </fieldset>
 
       <p className="text-center text-sm text-white/50">

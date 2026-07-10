@@ -13,8 +13,10 @@ import {
 import { signupSchema, signinSchema } from "../schemas/auth.js";
 import { AppError } from "../lib/errors.js";
 import { rateLimit } from "../middleware/rate-limit.js";
+import { requireAuth } from "../middleware/auth.js";
+import type { AppVariables } from "../types/hono.js";
 
-export const authRoutes = new Hono();
+export const authRoutes = new Hono<{ Variables: AppVariables }>();
 
 authRoutes.post(
   "/signup",
@@ -53,13 +55,14 @@ authRoutes.post(
   rateLimit({ windowMs: 60_000, max: 10 }),
   async (c) => {
     const body = signinSchema.parse(await c.req.json());
-    const email = body.email.toLowerCase();
+    const identifier = body.identifier.toLowerCase();
 
-    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(or(eq(users.email, identifier), eq(users.username, body.identifier)))
+      .limit(1);
 
-    // Always run a verify, even for a nonexistent user, against a precomputed dummy hash.
-    // Without this, response time differs based on whether the email exists, which leaks
-    // valid emails to an attacker via timing.
     const validPassword = user
       ? await verifyPassword(user.passwordHash, body.password)
       : await verifyPassword(DUMMY_PASSWORD_HASH, body.password);
@@ -82,4 +85,16 @@ authRoutes.post("/signout", async (c) => {
   if (token) await invalidateSession(token);
   clearSessionCookie(c);
   return c.body(null, 204);
+});
+
+authRoutes.get("/me", requireAuth, async (c) => {
+  const user = c.get("user");
+  return c.json({
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      createdAt: user.createdAt,
+    },
+  });
 });
