@@ -1,0 +1,18 @@
+/* Fonts */
+@import '@fontsource/inter/latin-400.css';
+
+@import 'tailwindcss';
+
+@theme {
+  --font-inter: "Inter", Arial, sans-serif;
+  --color-bg: #1c1c1c;
+  --color-text: #EBEBEB;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-inter);
+  }
+}
