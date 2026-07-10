@@ -5,16 +5,23 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "db:generate": "drizzle-kit generate --config=src/drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config=src/drizzle.config.ts",
+    "db:push": "drizzle-kit push --config=src/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=src/drizzle.config.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.8",
     "argon2": "^0.44.0",
     "dotenv": "^17.4.2",
-    "hono": "^4.12.27"
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.12.27",
+    "postgres": "^3.4.9"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "drizzle-kit": "^0.31.10",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
   }
