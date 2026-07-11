@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { targetSchema, type TargetFormData } from '@/schemas/targetSchema'
 import { getTarget, setTarget, deleteTarget } from '@/lib/target'
 import { ApiError } from '@/lib/api'
 
@@ -34,14 +37,18 @@ export function TargetTimer() {
   const [loading, setLoading] = useState(true)
   const [remaining, setRemaining] = useState(() => (targetAt ? getRemaining(targetAt) : null))
   const [lockStatus, setLockStatus] = useState(() => (targetSetAt ? getLockStatus(targetSetAt) : null))
-  const [daysInput, setDaysInput] = useState(21)
-  const [reasonInput, setReasonInput] = useState('')
-  const [submitting, setSubmitting] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const trimmedReason = reasonInput.trim()
-  const isReasonValid = trimmedReason.length > 0 && trimmedReason.length <= 500
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<TargetFormData>({
+    resolver: zodResolver(targetSchema),
+    defaultValues: { days: 21, reason: '' },
+  })
 
   useEffect(() => {
     getTarget()
@@ -74,25 +81,16 @@ export function TargetTimer() {
     return () => clearInterval(interval)
   }, [targetSetAt])
 
-  const handleSetTarget = async () => {
+  const onSubmit = async (data: TargetFormData) => {
     setError(null)
-
-    if (!isReasonValid) {
-      setError('Please share your motivation for this target.')
-      return
-    }
-
-    setSubmitting(true)
     try {
-      const { targetAt, targetReason } = await setTarget(daysInput, trimmedReason)
+      const { targetAt, targetReason } = await setTarget(data.days, data.reason)
       setTargetAt(targetAt)
       setTargetSetAt(new Date().toISOString())
       setTargetReason(targetReason)
-      setReasonInput('')
+      reset()
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to set target')
-    } finally {
-      setSubmitting(false)
     }
   }
 
@@ -151,37 +149,41 @@ export function TargetTimer() {
           )}
         </div>
       ) : (
-        <div className="space-y-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
           <p className="text-sm text-white/50">No active target</p>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min={1}
-              value={daysInput}
-              onChange={(e) => setDaysInput(Number(e.target.value))}
-              className="w-20 rounded border border-white/20 bg-transparent px-2 py-1 text-text"
-            />
-            <span className="text-sm text-white/50">days</span>
+          <div>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min={1}
+                {...register('days', { valueAsNumber: true })}
+                className="w-20 rounded border border-white/20 bg-transparent px-2 py-1 text-text"
+              />
+              <span className="text-sm text-white/50">days</span>
+            </div>
+            {errors.days && <p className="mt-1 text-xs text-red-400">{errors.days.message}</p>}
           </div>
 
-          <input
-            type="text"
-            value={reasonInput}
-            onChange={(e) => setReasonInput(e.target.value)}
-            placeholder="Why does this matter to you?"
-            maxLength={500}
-            className="w-full rounded border border-white/20 bg-transparent px-2 py-1 text-sm text-text placeholder:text-white/30"
-          />
+          <div>
+            <input
+              type="text"
+              {...register('reason')}
+              placeholder="Why does this matter to you?"
+              maxLength={500}
+              className="w-full rounded border border-white/20 bg-transparent px-2 py-1 text-sm text-text placeholder:text-white/30"
+            />
+            {errors.reason && <p className="mt-1 text-xs text-red-400">{errors.reason.message}</p>}
+          </div>
 
           <button
-            onClick={handleSetTarget}
-            disabled={submitting || daysInput < 1 || !isReasonValid}
+            type="submit"
+            disabled={isSubmitting}
             className="font-medium text-text border border-[#1C1C9F] py-1.5 px-3 bg-[#1C1C3A] hover:bg-[#1C1C8C] disabled:opacity-50"
           >
-            {submitting ? 'Setting...' : 'Set target'}
+            {isSubmitting ? 'Setting...' : 'Set target'}
           </button>
-        </div>
+        </form>
       )}
     </div>
   )
