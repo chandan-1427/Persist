@@ -1,5 +1,5 @@
 import type { Context, Next } from "hono";
-import { getSessionToken, validateSessionToken } from "../lib/session.js";
+import { getSessionToken, validateSessionToken } from "@/lib/session.js";
 
 export async function requireAuth(c: Context, next: Next) {
   const token = getSessionToken(c);

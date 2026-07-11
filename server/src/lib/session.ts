@@ -2,8 +2,8 @@ import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
 import type { Context } from "hono";
 import { setCookie, deleteCookie, getCookie } from "hono/cookie";
-import { db } from "../db/index.js";
-import { sessions, users, type User } from "../db/schema.js";
+import { db } from "@/db/index.js";
+import { sessions, users, type User } from "@/db/schema.js";
 
 const SESSION_COOKIE_NAME = "session";
 const SESSION_DURATION_MS = 1000 * 60 * 60 * 24 * 30; // 30 days

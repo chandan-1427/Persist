@@ -1,20 +1,20 @@
 import { Hono } from "hono";
 import { eq, or } from "drizzle-orm";
-import { db } from "../db/index.js";
-import { users } from "../db/schema.js";
-import { hashPassword, verifyPassword, DUMMY_PASSWORD_HASH } from "../lib/password.js";
+import { db } from "@/db/index.js";
+import { users } from "@/db/schema.js";
+import { hashPassword, verifyPassword, DUMMY_PASSWORD_HASH } from "@/lib/password.js";
 import {
   createSession,
   setSessionCookie,
   clearSessionCookie,
   getSessionToken,
   invalidateSession,
-} from "../lib/session.js";
-import { signupSchema, signinSchema } from "../schemas/auth.js";
-import { AppError } from "../lib/errors.js";
-import { rateLimit } from "../middleware/rate-limit.js";
-import { requireAuth } from "../middleware/auth.js";
-import type { AppVariables } from "../types/hono.js";
+} from "@/lib/session.js";
+import { signupSchema, signinSchema } from "@/schemas/auth.js";
+import { AppError } from "@/lib/errors.js";
+import { rateLimit } from "@/middleware/rate-limit.js";
+import { requireAuth } from "@/middleware/auth.js";
+import type { AppVariables } from "@/types/hono.js";
 
 export const authRoutes = new Hono<{ Variables: AppVariables }>();
 

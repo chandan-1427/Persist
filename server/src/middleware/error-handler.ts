@@ -1,8 +1,7 @@
-// src/middleware/error-handler.ts
 import type { ErrorHandler } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { ZodError } from "zod";
-import { AppError } from "../lib/errors.js";
+import { AppError } from "@/lib/errors.js";
 import { logError } from "./logger.js";
 
 export const errorHandler: ErrorHandler = (err, c) => {
