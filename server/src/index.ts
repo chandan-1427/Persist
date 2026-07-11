@@ -4,13 +4,13 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { sql } from 'drizzle-orm'
 
-import { db } from './db/index.js'
+import { db } from '@/db/index.js'
 
 import type { AppVariables } from './types/hono.js'
 
 import { requestLogger } from "./middleware/logger.js";
 import { errorHandler } from "./middleware/error-handler.js";
-import { authRoutes } from "./routes/auth.js";
+import { authRoutes } from "@/routes/auth.js";
 
 const app = new Hono<{ Variables: AppVariables }>();
 
