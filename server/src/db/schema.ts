@@ -5,6 +5,8 @@ export const users = pgTable("users", {
   username: varchar("username", { length: 32 }).notNull().unique(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  targetAt: timestamp("target_at", { withTimezone: true }), // nullable — no target set yet
+  targetSetAt: timestamp("target_set_at", { withTimezone: true }), // when the lock started
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

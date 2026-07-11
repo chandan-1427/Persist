@@ -11,6 +11,7 @@ import type { AppVariables } from '@/types/hono.js'
 import { requestLogger } from "@/middleware/logger.js";
 import { errorHandler } from "@/middleware/error-handler.js";
 import { authRoutes } from "@/routes/auth.js";
+import { targetRoutes } from "./routes/target.js";
 
 const app = new Hono<{ Variables: AppVariables }>();
 
@@ -39,6 +40,7 @@ app.get('/api/db/health', async (c) => {
 })
 
 app.route("/api/auth", authRoutes);
+app.route("/api/target", targetRoutes);
 
 serve({
   fetch: app.fetch,

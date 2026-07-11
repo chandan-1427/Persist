@@ -22,6 +22,20 @@
       "when": 1783706187493,
       "tag": "0002_mushy_frog_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783791935306,
+      "tag": "0003_tidy_arclight",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783792351728,
+      "tag": "0004_loud_bastion",
+      "breakpoints": true
     }
   ]
 }

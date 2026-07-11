@@ -75,7 +75,7 @@ authRoutes.post(
     setSessionCookie(c, token, expiresAt);
 
     return c.json({
-      user: { id: user.id, username: user.username, email: user.email, createdAt: user.createdAt },
+      user: { id: user.id, username: user.username, email: user.email, targetAt: user.targetAt, createdAt: user.createdAt },
     });
   }
 );
