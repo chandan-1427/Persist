@@ -30,7 +30,7 @@ app.get('/', (c) => {
 })
 
 app.get('/api/health', (c) => {
-  return c.json({ status: 'ok', message: 'Server is obviousley connected' })
+  return c.json({ status: 'ok', message: 'Server is obviously connected' })
 })
 
 app.get('/api/db/health', async (c) => {
