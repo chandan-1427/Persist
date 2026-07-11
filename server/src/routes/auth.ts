@@ -61,7 +61,7 @@ authRoutes.post(
     const [user] = await db
       .select()
       .from(users)
-      .where(or(eq(users.email, identifier), eq(users.username, body.identifier)))
+      .where(or(eq(users.email, identifier), eq(users.username, identifier)))
       .limit(1);
 
     const validPassword = user
