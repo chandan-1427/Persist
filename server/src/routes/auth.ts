@@ -9,6 +9,7 @@ import {
   clearSessionCookie,
   getSessionToken,
   invalidateSession,
+  invalidateAllUserSessions,
 } from "@/lib/session.js";
 import { signupSchema, signinSchema } from "@/schemas/auth.js";
 import { AppError } from "@/lib/errors.js";
@@ -32,7 +33,6 @@ authRoutes.post(
       .limit(1);
 
     if (existing.length > 0) {
-      // Deliberately vague — don't confirm which field collided (avoids account enumeration)
       throw new AppError("An account with this email or username already exists", 409);
     }
 
@@ -83,6 +83,13 @@ authRoutes.post(
 authRoutes.post("/signout", async (c) => {
   const token = getSessionToken(c);
   if (token) await invalidateSession(token);
+  clearSessionCookie(c);
+  return c.body(null, 204);
+});
+
+authRoutes.post("/signout-all", requireAuth, async (c) => {
+  const user = c.get("user");
+  await invalidateAllUserSessions(user.id);
   clearSessionCookie(c);
   return c.body(null, 204);
 });
