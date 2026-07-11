@@ -30,19 +30,25 @@ function getLockStatus(targetSetAt: string) {
 export function TargetTimer() {
   const [targetAt, setTargetAt] = useState<string | null>(null)
   const [targetSetAt, setTargetSetAt] = useState<string | null>(null)
+  const [targetReason, setTargetReason] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [remaining, setRemaining] = useState(() => (targetAt ? getRemaining(targetAt) : null))
   const [lockStatus, setLockStatus] = useState(() => (targetSetAt ? getLockStatus(targetSetAt) : null))
   const [daysInput, setDaysInput] = useState(21)
+  const [reasonInput, setReasonInput] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const trimmedReason = reasonInput.trim()
+  const isReasonValid = trimmedReason.length > 0 && trimmedReason.length <= 500
+
   useEffect(() => {
     getTarget()
-      .then(({ targetAt, targetSetAt }) => {
+      .then(({ targetAt, targetSetAt, targetReason }) => {
         setTargetAt(targetAt)
         setTargetSetAt(targetSetAt)
+        setTargetReason(targetReason)
       })
       .catch((err) => setError(err instanceof ApiError ? err.message : 'Failed to load target'))
       .finally(() => setLoading(false))
@@ -70,11 +76,19 @@ export function TargetTimer() {
 
   const handleSetTarget = async () => {
     setError(null)
+
+    if (!isReasonValid) {
+      setError('Please share your motivation for this target.')
+      return
+    }
+
     setSubmitting(true)
     try {
-      const { targetAt } = await setTarget(daysInput)
+      const { targetAt, targetReason } = await setTarget(daysInput, trimmedReason)
       setTargetAt(targetAt)
       setTargetSetAt(new Date().toISOString())
+      setTargetReason(targetReason)
+      setReasonInput('')
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to set target')
     } finally {
@@ -89,6 +103,7 @@ export function TargetTimer() {
       await deleteTarget()
       setTargetAt(null)
       setTargetSetAt(null)
+      setTargetReason(null)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to delete target')
     } finally {
@@ -119,6 +134,8 @@ export function TargetTimer() {
             </p>
           )}
 
+          {targetReason && <p className="text-sm text-white/60 italic">"{targetReason}"</p>}
+
           {lockStatus && !lockStatus.canDeleteNow ? (
             <p className="text-sm text-white/40">
               Unlocks for deletion in {lockStatus.hours}h {lockStatus.minutes}m {lockStatus.seconds}s
@@ -136,6 +153,7 @@ export function TargetTimer() {
       ) : (
         <div className="space-y-3">
           <p className="text-sm text-white/50">No active target</p>
+
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -145,14 +163,24 @@ export function TargetTimer() {
               className="w-20 rounded border border-white/20 bg-transparent px-2 py-1 text-text"
             />
             <span className="text-sm text-white/50">days</span>
-            <button
-              onClick={handleSetTarget}
-              disabled={submitting || daysInput < 1}
-              className="ml-2 font-medium text-text border border-[#1C1C9F] py-1.5 px-3 bg-[#1C1C3A] hover:bg-[#1C1C8C] disabled:opacity-50"
-            >
-              {submitting ? 'Setting...' : 'Set target'}
-            </button>
           </div>
+
+          <input
+            type="text"
+            value={reasonInput}
+            onChange={(e) => setReasonInput(e.target.value)}
+            placeholder="Why does this matter to you?"
+            maxLength={500}
+            className="w-full rounded border border-white/20 bg-transparent px-2 py-1 text-sm text-text placeholder:text-white/30"
+          />
+
+          <button
+            onClick={handleSetTarget}
+            disabled={submitting || daysInput < 1 || !isReasonValid}
+            className="font-medium text-text border border-[#1C1C9F] py-1.5 px-3 bg-[#1C1C3A] hover:bg-[#1C1C8C] disabled:opacity-50"
+          >
+            {submitting ? 'Setting...' : 'Set target'}
+          </button>
         </div>
       )}
     </div>

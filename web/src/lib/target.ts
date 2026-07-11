@@ -1,13 +1,17 @@
 import { apiFetch } from './api'
 
 export function getTarget() {
-  return apiFetch<{ targetAt: string | null; targetSetAt: string | null }>('/api/target')
+  return apiFetch<{
+    targetAt: string | null
+    targetSetAt: string | null
+    targetReason: string | null
+  }>('/api/target')
 }
 
-export function setTarget(days: number) {
-  return apiFetch<{ targetAt: string }>('/api/target', {
+export function setTarget(days: number, reason: string) {
+  return apiFetch<{ targetAt: string; targetReason: string }>('/api/target', {
     method: 'POST',
-    body: { days },
+    body: { days, reason: reason.trim() },
   })
 }
 
