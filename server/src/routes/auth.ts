@@ -25,11 +25,12 @@ authRoutes.post(
   async (c) => {
     const body = signupSchema.parse(await c.req.json());
     const email = body.email.toLowerCase();
+    const username = body.username.toLowerCase();
 
     const existing = await db
       .select({ id: users.id })
       .from(users)
-      .where(or(eq(users.email, email), eq(users.username, body.username)))
+      .where(or(eq(users.email, email), eq(users.username, username)))
       .limit(1);
 
     if (existing.length > 0) {
@@ -40,7 +41,7 @@ authRoutes.post(
 
     const [user] = await db
       .insert(users)
-      .values({ username: body.username, email, passwordHash })
+      .values({ username, email, passwordHash })
       .returning({ id: users.id, username: users.username, email: users.email, createdAt: users.createdAt });
 
     const { token, expiresAt } = await createSession(user.id);
