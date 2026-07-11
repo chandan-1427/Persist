@@ -13,6 +13,13 @@ import { errorHandler } from "@/middleware/error-handler.js";
 import { authRoutes } from "@/routes/auth.js";
 import { targetRoutes } from "./routes/target.js";
 
+const requiredEnv = ["DATABASE_URL", "CLIENT", "PORT", "NODE_ENV"] as const;
+for (const key of requiredEnv) {
+  if (!process.env[key]) {
+    throw new Error(`Missing required env var: ${key}`);
+  }
+}
+
 const app = new Hono<{ Variables: AppVariables }>();
 
 app.use(
