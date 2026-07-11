@@ -12,9 +12,7 @@ const LOCK_DURATION_MS = 24 * 60 * 60 * 1000;
 
 export const targetRoutes = new Hono<{ Variables: { user: User } }>();
 
-targetRoutes.use("*", requireAuth);
 targetRoutes.use("*", rateLimit({ windowMs: 60_000, max: 20 }));
-
 targetRoutes.use("*", requireAuth);
 
 targetRoutes.post("/", async (c) => {
