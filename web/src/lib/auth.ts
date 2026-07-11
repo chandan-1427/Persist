@@ -29,3 +29,7 @@ export function getMe() {
 export function signout() {
   return apiFetch<void>('/api/auth/signout', { method: 'POST' })
 }
+
+export function signoutAll() {
+  return apiFetch<void>('/api/auth/signout-all', { method: 'POST' })
+}

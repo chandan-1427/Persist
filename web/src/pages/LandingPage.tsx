@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { getMe, signout, type User } from '@/lib/auth'
+import { getMe, signout, signoutAll, type User } from '@/lib/auth'
 import { ApiError } from '@/lib/api'
 
 type ServerStatus = 'checking' | 'connected' | 'error'
@@ -10,7 +10,7 @@ export function LandingPage() {
   const [status, setStatus] = useState<ServerStatus>('checking')
   const [user, setUser] = useState<User | null>(null)
   const [userLoading, setUserLoading] = useState(true)
-  const [signingOut, setSigningOut] = useState(false)
+  const [signingOut, setSigningOut] = useState<'one' | 'all' | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -31,7 +31,6 @@ export function LandingPage() {
     getMe()
       .then(({ user }) => setUser(user))
       .catch((err) => {
-        // 401 just means "not signed in" — not an error worth surfacing
         if (!(err instanceof ApiError && err.status === 401)) {
           console.error(err)
         }
@@ -41,7 +40,7 @@ export function LandingPage() {
   }, [])
 
   const handleSignout = async () => {
-    setSigningOut(true)
+    setSigningOut('one')
     try {
       await signout()
       setUser(null)
@@ -49,7 +48,20 @@ export function LandingPage() {
     } catch (err) {
       console.error(err)
     } finally {
-      setSigningOut(false)
+      setSigningOut(null)
+    }
+  }
+
+  const handleSignoutAll = async () => {
+    setSigningOut('all')
+    try {
+      await signoutAll()
+      setUser(null)
+      navigate('/')
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSigningOut(null)
     }
   }
 
@@ -91,15 +103,24 @@ export function LandingPage() {
         longer than your device does.
       </p>
 
-      <div className="mt-8 flex gap-4">
+      <div className="mt-8 flex flex-wrap gap-4">
         {userLoading ? null : user ? (
-          <button
-            onClick={handleSignout}
-            disabled={signingOut}
-            className="font-medium text-text border border-[#7C1C1C] py-2 px-3 bg-[#2C1C1A] hover:bg-[#8C1C1C] disabled:opacity-50"
-          >
-            {signingOut ? 'Signing out...' : 'Sign out'}
-          </button>
+          <>
+            <button
+              onClick={handleSignout}
+              disabled={signingOut !== null}
+              className="font-medium text-text border border-[#7C1C1C] py-2 px-3 bg-[#2C1C1A] hover:bg-[#8C1C1C] disabled:opacity-50"
+            >
+              {signingOut === 'one' ? 'Signing out...' : 'Sign out'}
+            </button>
+            <button
+              onClick={handleSignoutAll}
+              disabled={signingOut !== null}
+              className="font-medium text-text border border-white/20 py-2 px-3 bg-white/5 hover:bg-white/10 disabled:opacity-50"
+            >
+              {signingOut === 'all' ? 'Signing out everywhere...' : 'Sign out of all devices'}
+            </button>
+          </>
         ) : (
           <>
             <Link to="/signup" className="font-medium text-text border border-[#1C1C9F] py-2 px-3 bg-[#1C1C3A] hover:bg-[#1C1C8C]">
