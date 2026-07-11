@@ -36,6 +36,13 @@
       "when": 1783792351728,
       "tag": "0004_loud_bastion",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783799779244,
+      "tag": "0005_faithful_kinsey_walden",
+      "breakpoints": true
     }
   ]
 }

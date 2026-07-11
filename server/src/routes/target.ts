@@ -16,7 +16,7 @@ targetRoutes.use("*", rateLimit({ windowMs: 60_000, max: 20 }));
 targetRoutes.use("*", requireAuth);
 
 targetRoutes.post("/", async (c) => {
-  const { days } = setTargetSchema.parse(await c.req.json());
+  const { days, reason } = setTargetSchema.parse(await c.req.json());
   const user = c.get("user");
 
   if (user.targetAt) {
@@ -26,16 +26,20 @@ targetRoutes.post("/", async (c) => {
   const now = new Date();
   const targetAt = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
 
-  await db.update(users).set({ targetAt, targetSetAt: now }).where(eq(users.id, user.id));
+  await db
+    .update(users)
+    .set({ targetAt, targetSetAt: now, targetReason: reason ?? null })
+    .where(eq(users.id, user.id));
 
-  return c.json({ targetAt });
+  return c.json({ targetAt, targetReason: reason ?? null });
 });
 
 targetRoutes.get("/", async (c) => {
   const user = c.get("user");
-  return c.json({ 
+  return c.json({
     targetAt: user.targetAt,
     targetSetAt: user.targetSetAt,
+    targetReason: user.targetReason,
   });
 });
 
@@ -55,7 +59,10 @@ targetRoutes.delete("/", async (c) => {
     );
   }
 
-  await db.update(users).set({ targetAt: null, targetSetAt: null }).where(eq(users.id, user.id));
+  await db
+    .update(users)
+    .set({ targetAt: null, targetSetAt: null, targetReason: null })
+    .where(eq(users.id, user.id));
 
   return c.body(null, 204);
 });

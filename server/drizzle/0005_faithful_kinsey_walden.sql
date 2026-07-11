@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "target_reason" varchar(500);
