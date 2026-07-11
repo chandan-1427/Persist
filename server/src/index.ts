@@ -42,8 +42,12 @@ app.get('/api/health', (c) => {
 })
 
 app.get('/api/db/health', async (c) => {
-  const result = await db.execute(sql`select 1 as ok`)
-  return c.json({ status: 'ok', db: result[0] ?? null })
+  try {
+    await db.execute(sql`select 1`)
+    return c.json({ status: 'ok' })
+  } catch (err) {
+    return c.json({ status: 'error' }, 503)
+  }
 })
 
 app.route("/api/auth", authRoutes);
