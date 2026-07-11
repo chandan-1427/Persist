@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { getMe, signout, signoutAll, type User } from '@/lib/auth'
 import { ApiError } from '@/lib/api'
+import { TargetTimer } from '@/components/timer/TargetTimer'
 
 type ServerStatus = 'checking' | 'connected' | 'error'
 
@@ -91,6 +92,8 @@ export function LandingPage() {
           Signed in as <span className="text-text font-medium">{user.username}</span> ({user.email})
         </p>
       )}
+
+      {!userLoading && user && <TargetTimer />}
 
       <p className="mt-4 text-white/70">
         Set a timer for any duration — an hour, a week, even 21 days — and it keeps running

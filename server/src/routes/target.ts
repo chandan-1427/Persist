@@ -35,7 +35,10 @@ targetRoutes.post("/", async (c) => {
 
 targetRoutes.get("/", async (c) => {
   const user = c.get("user");
-  return c.json({ targetAt: user.targetAt });
+  return c.json({ 
+    targetAt: user.targetAt,
+    targetSetAt: user.targetSetAt,
+  });
 });
 
 targetRoutes.delete("/", async (c) => {
