@@ -59,3 +59,5 @@ serve({
 }, (info) => {
   console.log(`Server is running on port:${info.port}`)
 })
+
+export default app;

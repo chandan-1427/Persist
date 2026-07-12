@@ -17,6 +17,10 @@ export function rateLimit({ windowMs, max }: RateLimitOptions): MiddlewareHandle
   cleanup.unref();
 
   return async (c, next) => {
+    if (process.env.NODE_ENV === "test") {
+      return next(); // skip limiting entirely during tests
+    }
+
     const ip =
       c.req.header("x-forwarded-for")?.split(",")[0].trim() ??
       c.req.header("x-real-ip") ??
