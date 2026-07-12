@@ -38,12 +38,12 @@ Tests read `.env.test`, not `.env` — this points them at the Docker test datab
 ## What's covered
 
 - `src/routes/auth.test.ts` — signup (success, duplicate email, weak password), signin (email, case-insensitive username, wrong password, nonexistent identifier)
+- `src/routes/target.test.ts` — set (success, missing reason, duplicate target, unauthenticated), get (populated and empty state), delete (blocked before 24h, succeeds and clears all fields after 24h, 404 with no target)
 
 ## What's not covered yet
 
-- Target routes (set/get/delete, the 24h lock, the motivation field)
 - Signout / signout-all session revocation
-- Rate limiter behavior itself (deliberately excluded from auth tests above)
+- Rate limiter behavior itself (deliberately excluded from route tests above)
 
 ## Adding new tests
 
