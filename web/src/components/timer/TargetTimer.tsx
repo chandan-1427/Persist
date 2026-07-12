@@ -30,6 +30,11 @@ function getLockStatus(targetSetAt: string) {
   return { canDeleteNow, hours, minutes, seconds }
 }
 
+
+function pad(n: number) {
+  return n.toString().padStart(2, '0')
+}
+
 export function TargetTimer() {
   const [targetAt, setTargetAt] = useState<string | null>(null)
   const [targetSetAt, setTargetSetAt] = useState<string | null>(null)
@@ -135,9 +140,9 @@ export function TargetTimer() {
           {targetReason && <p className="text-sm text-white/60 italic">"{targetReason}"</p>}
 
           {lockStatus && !lockStatus.canDeleteNow ? (
-            <p className="text-sm text-white/40">
-              Unlocks for deletion in {lockStatus.hours}h {lockStatus.minutes}m {lockStatus.seconds}s
-            </p>
+<p className="text-sm text-white/40 tabular-nums">
+  Unlocks for deletion in {pad(lockStatus.hours)}h {pad(lockStatus.minutes)}m {pad(lockStatus.seconds)}s
+</p>
           ) : (
             <button
               onClick={handleDeleteTarget}
