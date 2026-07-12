@@ -122,3 +122,80 @@ describe("POST /api/auth/signin", () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe("POST /api/auth/signout", () => {
+  it("invalidates only the current session, not other sessions", async () => {
+    const credentials = { username: "signoutuser", email: "signoutuser@example.com", password: "password123" };
+
+    await app.request("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
+
+    // Sign in from a second "device"
+    const secondSignin = await app.request("/api/auth/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier: credentials.email, password: credentials.password }),
+    });
+    const device2Cookie = secondSignin.headers.get("set-cookie")!;
+
+    const firstSignin = await app.request("/api/auth/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier: credentials.email, password: credentials.password }),
+    });
+    const device1Cookie = firstSignin.headers.get("set-cookie")!;
+
+    const signoutRes = await app.request("/api/auth/signout", {
+      method: "POST",
+      headers: { Cookie: device1Cookie },
+    });
+    expect(signoutRes.status).toBe(204);
+
+    const device1Check = await app.request("/api/target", { headers: { Cookie: device1Cookie } });
+    expect(device1Check.status).toBe(401);
+
+    const device2Check = await app.request("/api/target", { headers: { Cookie: device2Cookie } });
+    expect(device2Check.status).toBe(200); // still logged in
+  });
+});
+
+describe("POST /api/auth/signout-all", () => {
+  it("invalidates every session for the user", async () => {
+    const credentials = { username: "signoutalluser", email: "signoutalluser@example.com", password: "password123" };
+
+    await app.request("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
+
+    const device2Signin = await app.request("/api/auth/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier: credentials.email, password: credentials.password }),
+    });
+    const device2Cookie = device2Signin.headers.get("set-cookie")!;
+
+    const device1Signin = await app.request("/api/auth/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier: credentials.email, password: credentials.password }),
+    });
+    const device1Cookie = device1Signin.headers.get("set-cookie")!;
+
+    const signoutAllRes = await app.request("/api/auth/signout-all", {
+      method: "POST",
+      headers: { Cookie: device1Cookie },
+    });
+    expect(signoutAllRes.status).toBe(204);
+
+    const device1Check = await app.request("/api/target", { headers: { Cookie: device1Cookie } });
+    expect(device1Check.status).toBe(401);
+
+    const device2Check = await app.request("/api/target", { headers: { Cookie: device2Cookie } });
+    expect(device2Check.status).toBe(401); // also killed
+  });
+});
