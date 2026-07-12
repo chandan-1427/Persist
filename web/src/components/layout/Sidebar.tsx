@@ -66,6 +66,7 @@ export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
               <button
                 onClick={handleSignoutAll}
                 disabled={signingOut !== null}
+                title='Sign out from all devices'
                 className="text-sm font-medium text-text border border-white/20 py-2 px-2 bg-white/5 hover:bg-white/10 disabled:opacity-50"
               >
                 {signingOut === 'all' ? 'Signing out...' : 'Sign out all'}
