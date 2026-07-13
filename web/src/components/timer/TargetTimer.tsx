@@ -119,7 +119,7 @@ export function TargetTimer() {
   }
 
   return (
-    <div className="mt-6 rounded border border-white/10 bg-white/5 p-4">
+    <div className="mt-6 p-4">
       {error && (
         <p role="alert" className="mb-3 text-sm text-red-400">
           {error}
@@ -127,66 +127,84 @@ export function TargetTimer() {
       )}
 
       {targetAt && remaining ? (
-        <div className="space-y-3">
-          <p className="text-sm text-white/50">Time remaining</p>
-          {remaining.done ? (
-            <p className="text-2xl font-semibold">Target reached 🎉</p>
-          ) : (
-            <p className="font-mono text-2xl">
-              {remaining.days}d {remaining.hours}h {remaining.minutes}m {remaining.seconds}s
-            </p>
+        <div className="space-y-10">
+          <div>
+            <p className="mt-3 text-xs font-medium uppercase tracking-wide text-white/30">Time remaining</p>
+            {remaining.done ? (
+              <p className="text-4xl font-semibold text-text">Target reached 🎉</p>
+            ) : (
+              <p className="font-sans text-7xl tabular-nums text-text">
+                {pad(remaining.days)}<span className="text-3xl text-white/30">d</span>{' '}
+                {pad(remaining.hours)}<span className="text-3xl text-white/30">h</span>{' '}
+                {pad(remaining.minutes)}<span className="text-3xl text-white/30">m</span>{' '}
+                {pad(remaining.seconds)}<span className="text-3xl text-white/30">s</span>
+              </p>
+            )}
+          </div>
+
+          {targetReason && (
+            <p className="text-sm text-white/40">"{targetReason}"</p>
           )}
 
-          {targetReason && <p className="text-sm text-white/60 italic">"{targetReason}"</p>}
-
           {lockStatus && !lockStatus.canDeleteNow ? (
-<p className="text-sm text-white/40 tabular-nums">
-  Unlocks for deletion in {pad(lockStatus.hours)}h {pad(lockStatus.minutes)}m {pad(lockStatus.seconds)}s
-</p>
+            <p className="text-xs text-white/30 tabular-nums">
+              Unlocks for deletion in {pad(lockStatus.hours)}h {pad(lockStatus.minutes)}m {pad(lockStatus.seconds)}s
+            </p>
           ) : (
             <button
               onClick={handleDeleteTarget}
               disabled={deleting}
-              className="text-sm text-white/50 underline hover:text-white/80 disabled:opacity-50"
+              className="border-b border-white/15 pb-0.5 text-xs text-white/40 transition-colors hover:border-white/40 hover:text-white/70 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {deleting ? 'Deleting...' : 'Delete target'}
+              {deleting ? 'Deleting…' : 'Delete target'}
             </button>
           )}
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-          <p className="text-sm text-white/50">No active target</p>
-
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
           <div>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min={1}
-                {...register('days', { valueAsNumber: true })}
-                className="w-20 rounded border border-white/20 bg-transparent px-2 py-1 text-text"
-              />
-              <span className="text-sm text-white/50">days</span>
-            </div>
-            {errors.days && <p className="mt-1 text-xs text-red-400">{errors.days.message}</p>}
+            <p className="text-base font-medium text-white/80">No active target</p>
+            <p className="mt-1.5 text-sm text-white/40">Set a duration and commit to it.</p>
           </div>
 
           <div>
+            <label htmlFor="days" className="block text-xs font-medium uppercase tracking-wide text-white/40">
+              Duration
+            </label>
+            <div className="mt-2 flex items-baseline gap-2.5">
+              <input
+                id="days"
+                type="number"
+                min={1}
+                {...register('days', { valueAsNumber: true })}
+                className="w-20 border-b border-white/20 bg-transparent py-1.5 text-2xl text-text tabular-nums focus:border-white/60 focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              />
+              <span className="text-base text-white/40">days</span>
+            </div>
+            {errors.days && <p className="mt-2 text-sm text-red-400/90">{errors.days.message}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="reason" className="block text-xs font-medium uppercase tracking-wide text-white/40">
+              Reason
+            </label>
             <input
+              id="reason"
               type="text"
               {...register('reason')}
               placeholder="Why does this matter to you?"
               maxLength={500}
-              className="w-full rounded border border-white/20 bg-transparent px-2 py-1 text-sm text-text placeholder:text-white/30"
+              className="mt-2 w-full border-b border-white/20 bg-transparent py-1.5 text-base text-text placeholder:text-white/25 focus:border-white/60 focus:outline-none"
             />
-            {errors.reason && <p className="mt-1 text-xs text-red-400">{errors.reason.message}</p>}
+            {errors.reason && <p className="mt-2 text-sm text-red-400/90">{errors.reason.message}</p>}
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="font-medium text-text border border-[#1C1C9F] py-1.5 px-3 bg-[#1C1C3A] hover:bg-[#1C1C8C] disabled:opacity-50"
+            className="w-full border border-[#2A2AAD] bg-[#1C1C3A] py-3 text-base font-medium text-text transition-colors hover:border-[#3535C4] hover:bg-[#23234A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3535C4] active:bg-[#18182E] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {isSubmitting ? 'Setting...' : 'Set target'}
+            {isSubmitting ? 'Setting target…' : 'Set target'}
           </button>
         </form>
       )}
