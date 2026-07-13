@@ -202,7 +202,7 @@ export function TargetTimer() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full border border-[#2A2AAD] bg-[#1C1C3A] py-3 text-base font-medium text-text transition-colors hover:border-[#3535C4] hover:bg-[#23234A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3535C4] active:bg-[#18182E] disabled:cursor-not-allowed disabled:opacity-40"
+            className="border border-[#2A2AAD] bg-[#1C1C3A] py-2 px-4 text-md font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-[#2A2AAD] hover:bg-[#26269C] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3535C4] active:translate-y-px active:shadow-sm"
           >
             {isSubmitting ? 'Setting target…' : 'Set target'}
           </button>

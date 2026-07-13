@@ -59,17 +59,17 @@ export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
               <button
                 onClick={handleSignout}
                 disabled={signingOut !== null}
-                className="text-sm font-medium text-text border border-[#7C1C1C] py-2 px-2 bg-[#2C1C1A] hover:bg-[#8C1C1C] disabled:opacity-50"
+                className="border border-white/10 bg-white/[0.03] py-2 text-sm font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-white/10 hover:bg-white/[0.06] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40 active:translate-y-px active:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {signingOut === 'one' ? 'Signing out...' : 'Sign out'}
+                {signingOut === 'one' ? 'Signing out…' : 'Sign out'}
               </button>
               <button
                 onClick={handleSignoutAll}
                 disabled={signingOut !== null}
-                title='Sign out from all devices'
-                className="text-sm font-medium text-text border border-white/20 py-2 px-2 bg-white/5 hover:bg-white/10 disabled:opacity-50"
+                title="Sign out from all devices"
+                className="border border-[#7C1C1C] bg-[#2C1C1A] py-2 text-sm font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-[#7C1C1C] hover:bg-[#8C1C1C] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8C1C1C] active:translate-y-px active:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {signingOut === 'all' ? 'Signing out...' : 'Sign out all'}
+                {signingOut === 'all' ? 'Signing out…' : 'Sign out all'}
               </button>
             </div>
           </div>

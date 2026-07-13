@@ -81,10 +81,16 @@ export function LandingPage() {
       <div className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 text-text">
         {description}
         <div className="mt-8 flex gap-4">
-          <Link to="/signup" className="font-medium text-text border border-[#1C1C9F] py-2 px-3 bg-[#1C1C3A] hover:bg-[#1C1C8C]">
+          <Link
+            to="/signup"
+            className="border border-[#2A2AAD] bg-[#1C1C3A] py-2 px-4 text-md font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-[#2A2AAD] hover:bg-[#26269C] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3535C4] active:translate-y-px active:shadow-sm"
+          >
             Sign up
           </Link>
-          <Link to="/signin" className="font-medium text-text border border-[#7C1C1C] py-2 px-3 bg-[#2C1C1A] hover:bg-[#8C1C1C]">
+          <Link
+            to="/signin"
+            className="border border-[#7C1C1C] bg-[#2C1C1A] py-2 px-4 text-md font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-[#7C1C1C] hover:bg-[#8C1C1C] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3535C4] active:translate-y-px active:shadow-sm"
+          >
             Sign in
           </Link>
         </div>
