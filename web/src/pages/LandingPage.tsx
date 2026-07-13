@@ -4,6 +4,7 @@ import { getMe, type User } from '@/lib/auth'
 import { ApiError } from '@/lib/api'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { TargetTimer } from '@/components/timer/TargetTimer'
+import { blueClass, redClass } from '@/styles/buttonStyles'
 
 type ServerStatus = 'checking' | 'connected' | 'error'
 
@@ -83,13 +84,13 @@ export function LandingPage() {
         <div className="mt-8 flex gap-4">
           <Link
             to="/signup"
-            className="border border-[#2A2AAD] bg-[#1C1C3A] py-2 px-4 text-md font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-[#2A2AAD] hover:bg-[#26269C] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3535C4] active:translate-y-px active:shadow-sm"
+            className={blueClass}
           >
             Sign up
           </Link>
           <Link
             to="/signin"
-            className="border border-[#7C1C1C] bg-[#2C1C1A] py-2 px-4 text-md font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-[#7C1C1C] hover:bg-[#8C1C1C] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3535C4] active:translate-y-px active:shadow-sm"
+            className={redClass}
           >
             Sign in
           </Link>

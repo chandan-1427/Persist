@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { targetSchema, type TargetFormData } from '@/schemas/targetSchema'
 import { getTarget, setTarget, deleteTarget } from '@/lib/target'
 import { ApiError } from '@/lib/api'
+import { blueClass } from '@/styles/buttonStyles'
 
 const LOCK_DURATION_MS = 24 * 60 * 60 * 1000
 
@@ -202,7 +203,7 @@ export function TargetTimer() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="border border-[#2A2AAD] bg-[#1C1C3A] py-2 px-4 text-md font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-[#2A2AAD] hover:bg-[#26269C] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3535C4] active:translate-y-px active:shadow-sm"
+            className={blueClass}
           >
             {isSubmitting ? 'Setting target…' : 'Set target'}
           </button>

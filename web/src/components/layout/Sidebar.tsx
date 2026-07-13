@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useState, type ReactNode } from 'react'
 import { signout, signoutAll, type User } from '@/lib/auth'
+import { redClass, whiteClass } from '@/styles/buttonStyles'
 
 type SidebarProps = {
   user: User
@@ -59,7 +60,7 @@ export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
               <button
                 onClick={handleSignout}
                 disabled={signingOut !== null}
-                className="border border-white/10 bg-white/[0.03] py-2 text-sm font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-white/10 hover:bg-white/[0.06] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40 active:translate-y-px active:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                className={whiteClass}
               >
                 {signingOut === 'one' ? 'Signing out…' : 'Sign out'}
               </button>
@@ -67,7 +68,7 @@ export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
                 onClick={handleSignoutAll}
                 disabled={signingOut !== null}
                 title="Sign out from all devices"
-                className="border border-[#7C1C1C] bg-[#2C1C1A] py-2 text-sm font-medium text-text shadow-sm shadow-black/20 transition-all hover:border-[#7C1C1C] hover:bg-[#8C1C1C] hover:shadow-md hover:shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8C1C1C] active:translate-y-px active:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                className={redClass}
               >
                 {signingOut === 'all' ? 'Signing out…' : 'Sign out all'}
               </button>
