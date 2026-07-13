@@ -130,9 +130,9 @@ export function TargetTimer() {
       {targetAt && remaining ? (
         <div className="space-y-10">
           <div>
-            <p className="mt-3 text-xs font-medium uppercase tracking-wide text-white/30">Time remaining</p>
+            <p className="mt-3 text-xs font-medium uppercase tracking-wide text-white/40">Time remaining</p>
             {remaining.done ? (
-              <p className="text-4xl font-semibold text-text">Target reached 🎉</p>
+              <p className="text-4xl font-semibold text-text">Target reached</p>
             ) : (
               <p className="font-sans text-7xl tabular-nums text-text">
                 {pad(remaining.days)}<span className="text-3xl text-white/30">d</span>{' '}
@@ -144,7 +144,7 @@ export function TargetTimer() {
           </div>
 
           {targetReason && (
-            <p className="text-sm text-white/40">"{targetReason}"</p>
+            <p className="text-sm text-white/70">"{targetReason}"</p>
           )}
 
           {lockStatus && !lockStatus.canDeleteNow ? (
