@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { LandingPage } from './pages/LandingPage'
-import { SignupPage } from './pages/SignupPage'
-import { SigninPage } from './pages/SigninPage'
+import { LandingPage } from '@/pages/LandingPage'
+import { SignupPage } from '@/pages/SignupPage'
+import { SigninPage } from '@/pages/SigninPage'
+import { Footer } from '@/components/layout/Footer'
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
         <Route path="/signin" element={<SigninPage />} />
         <Route path="/" element={<LandingPage />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   )
 }
