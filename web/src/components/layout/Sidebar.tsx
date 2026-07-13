@@ -79,7 +79,10 @@ export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
 
       <button
         onClick={() => setCollapsed((prev) => !prev)}
-        className="absolute left-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded border border-white/10 bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80"
+        className="absolute left-3 top-3 z-20 flex h-8 w-8 
+          items-center justify-center rounded border border-white/10 bg-white/5 
+          text-white/50 hover:bg-white/10 hover:text-white/80
+          active:translate-y-px active:shadow-sm"
         aria-label={collapsed ? 'Open sidebar' : 'Close sidebar'}
       >
         {collapsed ? '»' : '«'}
