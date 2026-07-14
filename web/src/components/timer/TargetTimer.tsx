@@ -5,6 +5,7 @@ import { targetSchema, type TargetFormData } from '@/schemas/targetSchema'
 import { getTarget, setTarget, deleteTarget } from '@/lib/target'
 import { ApiError } from '@/lib/api'
 import { blueClass } from '@/styles/buttonStyles'
+import { ConfirmDialog } from '../ui/ConfirmDialog'
 
 const LOCK_DURATION_MS = 24 * 60 * 60 * 1000
 
@@ -45,6 +46,7 @@ export function TargetTimer() {
   const [lockStatus, setLockStatus] = useState(() => (targetSetAt ? getLockStatus(targetSetAt) : null))
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const {
     register,
@@ -108,6 +110,7 @@ export function TargetTimer() {
       setTargetAt(null)
       setTargetSetAt(null)
       setTargetReason(null)
+      setConfirmOpen(false)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to delete target')
     } finally {
@@ -153,11 +156,11 @@ export function TargetTimer() {
             </p>
           ) : (
             <button
-              onClick={handleDeleteTarget}
+              onClick={() => setConfirmOpen(true)}
               disabled={deleting}
               className="border-b border-white/15 pb-0.5 text-xs text-white/40 transition-colors hover:border-white/40 hover:text-white/70 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {deleting ? 'Deleting…' : 'Delete target'}
+              Delete target
             </button>
           )}
         </div>
@@ -209,6 +212,20 @@ export function TargetTimer() {
           </button>
         </form>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete this target?"
+        description={
+          targetReason
+            ? `You said: "${targetReason}" — this can't be undone.`
+            : "This can't be undone."
+        }
+        confirmLabel="Delete"
+        confirming={deleting}
+        onConfirm={handleDeleteTarget}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   )
 }
