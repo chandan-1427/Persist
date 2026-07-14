@@ -9,10 +9,25 @@ type SidebarProps = {
   description: ReactNode
 }
 
+const SIDEBAR_STORAGE_KEY = 'sidebar-collapsed'
+
+function getInitialCollapsed(): boolean {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem(SIDEBAR_STORAGE_KEY) === 'true'
+}
+
 export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
   const navigate = useNavigate()
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(getInitialCollapsed)
   const [signingOut, setSigningOut] = useState<'one' | 'all' | null>(null)
+
+  const toggleCollapsed = () => {
+    setCollapsed((prev) => {
+      const next = !prev
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next))
+      return next
+    })
+  }
 
   const handleSignout = async () => {
     setSigningOut('one')
@@ -78,7 +93,7 @@ export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
       </div>
 
       <button
-        onClick={() => setCollapsed((prev) => !prev)}
+        onClick={toggleCollapsed}
         className="absolute left-3 top-3 z-20 flex h-8 w-8 
           items-center justify-center rounded border border-white/10 bg-white/5 
           text-white/50 hover:bg-white/10 hover:text-white/80
