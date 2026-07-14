@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { getMe, type User } from '@/lib/auth'
 import { ApiError } from '@/lib/api'
 import { Sidebar } from '@/components/layout/Sidebar'
+import { PageSkeleton } from '@/components/layout/PageSkeleton'
 import { TargetTimer } from '@/components/timer/TargetTimer'
 import { blueClass, redClass } from '@/styles/buttonStyles'
 
@@ -101,7 +102,7 @@ export function LandingPage() {
 
   // Loading: avoid flashing either layout before we know auth state
   if (userLoading) {
-    return <div className="min-h-screen" />
+    return <PageSkeleton />
   }
 
   // Logged in: sidebar owns its own collapse state and account UI
