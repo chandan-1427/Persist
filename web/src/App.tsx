@@ -1,17 +1,21 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { LandingPage } from '@/pages/LandingPage'
-import { SignupPage } from '@/pages/SignupPage'
-import { SigninPage } from '@/pages/SigninPage'
+import { lazy, Suspense } from 'react'
 import { Footer } from '@/components/layout/Footer'
+
+const LandingPage = lazy(() => import('@/pages/LandingPage').then(m => ({ default: m.LandingPage })))
+const SignupPage = lazy(() => import('@/pages/SignupPage').then(m => ({ default: m.SignupPage })))
+const SigninPage = lazy(() => import('@/pages/SigninPage').then(m => ({ default: m.SigninPage })))
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/signin" element={<SigninPage />} />
-        <Route path="/" element={<LandingPage />} />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/signin" element={<SigninPage />} />
+          <Route path="/" element={<LandingPage />} />
+        </Routes>
+      </Suspense>
       <Footer />
     </BrowserRouter>
   )
