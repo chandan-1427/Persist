@@ -1,4 +1,3 @@
-// components/landing/AuthenticatedLanding.tsx
 import { Sidebar } from '@/components/layout/Sidebar'
 import { TargetTimer } from '@/components/timer/TargetTimer'
 import type { User } from '@/lib/auth'

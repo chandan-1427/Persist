@@ -81,7 +81,7 @@ export function LandingPage() {
   }
 
   if (!user) {
-    return <GuestLanding description={description} />
+    return <GuestLanding statusIndicator={statusIndicator} />
   }
 
   return (
