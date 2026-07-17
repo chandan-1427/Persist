@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom'
+// LandingPage.tsx
 import { useEffect, useState } from 'react'
 import { getMe, type User } from '@/lib/auth'
 import { ApiError } from '@/lib/api'
-import { Sidebar } from '@/components/layout/Sidebar'
 import { PageSkeleton } from '@/components/layout/PageSkeleton'
-import { TargetTimer } from '@/components/timer/TargetTimer'
-import { blueClass, redClass } from '@/styles/buttonStyles'
+import { GuestLanding } from '@/components/landing/GuestLanding'
+import { AuthenticatedLanding } from '@/components/landing/AuthenticatedLanding'
 
 type ServerStatus = 'checking' | 'connected' | 'error'
 
@@ -77,44 +76,19 @@ export function LandingPage() {
     </>
   )
 
-  // Logged out: original single-column centered layout, unchanged
-  if (!userLoading && !user) {
-    return (
-      <div className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 text-text">
-        {description}
-        <div className="mt-8 flex gap-4">
-          <Link
-            to="/signup"
-            className={blueClass}
-          >
-            Sign up
-          </Link>
-          <Link
-            to="/signin"
-            className={redClass}
-          >
-            Sign in
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
-  // Loading: avoid flashing either layout before we know auth state
   if (userLoading) {
     return <PageSkeleton />
   }
 
-  // Logged in: sidebar owns its own collapse state and account UI
-  return (
-    <div className="flex min-h-screen">
-      {user && (
-        <Sidebar user={user} onSignedOut={() => setUser(null)} description={description} />
-      )}
+  if (!user) {
+    return <GuestLanding description={description} />
+  }
 
-      <div className="relative flex flex-1 items-center justify-center">
-        {user && <TargetTimer />}
-      </div>
-    </div>
+  return (
+    <AuthenticatedLanding
+      user={user}
+      description={description}
+      onSignedOut={() => setUser(null)}
+    />
   )
 }
