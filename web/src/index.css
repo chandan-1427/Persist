@@ -1,10 +1,12 @@
 /* Fonts */
 @import '@fontsource/inter/latin-400.css';
+@import '@fontsource/covered-by-your-grace';
 
 @import 'tailwindcss';
 
 @theme {
   --font-inter: "Inter", Arial, sans-serif;
+  --font-covered: "Covered By Your Grace", cursive;
   --color-bg: #1c1c1c;
   --color-text: #EBEBEB;
 }
