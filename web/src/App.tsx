@@ -15,8 +15,8 @@ export default function App() {
           <Route path="/signin" element={<SigninPage />} />
           <Route path="/" element={<LandingPage />} />
         </Routes>
+        <Footer />
       </Suspense>
-      <Footer />
     </BrowserRouter>
   )
 }
