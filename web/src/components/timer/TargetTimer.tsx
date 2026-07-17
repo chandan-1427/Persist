@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { motion, type Variants } from 'framer-motion'
 import { targetSchema, type TargetFormData } from '@/schemas/targetSchema'
 import { getTarget, setTarget, deleteTarget } from '@/lib/target'
 import { ApiError } from '@/lib/api'
@@ -8,6 +9,25 @@ import { blueClass } from '@/styles/buttonStyles'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
 
 const LOCK_DURATION_MS = 24 * 60 * 60 * 1000
+
+const container: Variants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+}
+
+const item: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
+}
 
 function getRemaining(targetAt: string) {
   const diff = new Date(targetAt).getTime() - Date.now()
@@ -31,7 +51,6 @@ function getLockStatus(targetSetAt: string) {
 
   return { canDeleteNow, hours, minutes, seconds }
 }
-
 
 function pad(n: number) {
   return n.toString().padStart(2, '0')
@@ -119,77 +138,108 @@ export function TargetTimer() {
   }
 
   if (loading) {
-    return <p className="mt-6 text-sm text-white/50">Loading your target...</p>
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <p className="text-sm uppercase tracking-widest text-white/40">Loading your target…</p>
+      </div>
+    )
   }
 
   return (
-    <div className="mt-6 p-4">
+    <div className="mx-auto max-w-3xl px-6 py-16 text-text md:py-24">
       {error && (
-        <p role="alert" className="mb-3 text-sm text-red-400">
+        <p role="alert" className="mb-6 border-l-2 border-red-800 pl-3 text-sm text-red-400">
           {error}
         </p>
       )}
 
       {targetAt && remaining ? (
-        <div className="space-y-10">
-          <div>
-            <p className="mt-3 text-xs font-medium uppercase tracking-wide text-white/40">Time remaining</p>
+        <motion.div variants={container} initial="hidden" animate="show" className="space-y-14">
+          <motion.div variants={item}>
+            <p className="text-sm font-medium uppercase tracking-widest text-white/40">
+              Time remaining
+            </p>
+
             {remaining.done ? (
-              <p className="text-4xl font-semibold text-text">Target reached</p>
+              <p className="mt-4 text-6xl font-bold leading-[1.1] tracking-tight text-white md:text-7xl">
+                Target reached.
+              </p>
             ) : (
-              <p className="font-sans text-7xl tabular-nums text-text">
-                {pad(remaining.days)}<span className="text-3xl text-white/30">d</span>{' '}
-                {pad(remaining.hours)}<span className="text-3xl text-white/30">h</span>{' '}
-                {pad(remaining.minutes)}<span className="text-3xl text-white/30">m</span>{' '}
-                {pad(remaining.seconds)}<span className="text-3xl text-white/30">s</span>
+              <p className="mt-4 font-sans text-6xl font-bold tabular-nums leading-none tracking-tight text-white md:text-8xl">
+                {pad(remaining.days)}<span className="mx-1 text-2xl font-medium text-white/30 md:text-3xl">d</span>
+                {pad(remaining.hours)}<span className="mx-1 text-2xl font-medium text-white/30 md:text-3xl">h</span>
+                {pad(remaining.minutes)}<span className="mx-1 text-2xl font-medium text-white/30 md:text-3xl">m</span>
+                {pad(remaining.seconds)}<span className="mx-1 text-2xl font-medium text-white/30 md:text-3xl">s</span>
               </p>
             )}
-          </div>
+          </motion.div>
 
           {targetReason && (
-            <p className="text-sm text-white/70">"{targetReason}"</p>
+            <motion.div variants={item} className="bg-red-800 px-6 py-5">
+              <p className="text-xs font-medium uppercase tracking-widest text-white/70">
+                Why you started?
+              </p>
+              <p className="mt-2 text-xl font-medium leading-snug text-white">
+                {targetReason}
+              </p>
+            </motion.div>
           )}
 
-          {lockStatus && !lockStatus.canDeleteNow ? (
-            <p className="text-xs text-white/30 tabular-nums">
-              Unlocks for deletion in {pad(lockStatus.hours)}h {pad(lockStatus.minutes)}m {pad(lockStatus.seconds)}s
-            </p>
-          ) : (
-            <button
-              onClick={() => setConfirmOpen(true)}
-              disabled={deleting}
-              className="border-b border-white/15 pb-0.5 text-xs text-white/40 transition-colors hover:border-white/40 hover:text-white/70 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Delete target
-            </button>
-          )}
-        </div>
+          <motion.div variants={item}>
+            {lockStatus && !lockStatus.canDeleteNow ? (
+              <p className="text-xs uppercase tracking-widest text-white/30 tabular-nums">
+                Unlocks for deletion in {pad(lockStatus.hours)}h {pad(lockStatus.minutes)}m{' '}
+                {pad(lockStatus.seconds)}s
+              </p>
+            ) : (
+              <button
+                onClick={() => setConfirmOpen(true)}
+                disabled={deleting}
+                className="border-b border-white/15 pb-0.5 text-xs uppercase tracking-widest text-white/40 transition-colors hover:border-white/40 hover:text-white/70 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Delete target
+              </button>
+            )}
+          </motion.div>
+        </motion.div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
-          <div>
-            <p className="text-base font-medium text-white/80">No active target</p>
-            <p className="mt-1.5 text-sm text-white/40">Set a duration and commit to it.</p>
-          </div>
+        <motion.form
+          variants={container}
+          initial="hidden"
+          animate="show"
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-12"
+        >
+          <motion.div variants={item}>
+            <p className="text-sm font-medium uppercase tracking-widest text-white/40">
+              No active target
+            </p>
+            <p className="mt-4 text-5xl font-bold leading-[1.1] tracking-tight text-white md:text-7xl">
+              Set the timer.
+              <br />
+              Commit to it.
+            </p>
+          </motion.div>
 
-          <div>
-            <label htmlFor="days" className="block text-xs font-medium uppercase tracking-wide text-white/40">
+          <motion.div variants={item}>
+            <label htmlFor="days" className="block text-xs font-medium uppercase tracking-widest text-white/40">
               Duration
             </label>
-            <div className="mt-2 flex items-baseline gap-2.5">
+            <div className="mt-3 flex items-baseline gap-3">
               <input
                 id="days"
                 type="number"
                 min={1}
                 {...register('days', { valueAsNumber: true })}
-                className="w-20 border-b border-white/20 bg-transparent py-1.5 text-2xl text-text tabular-nums focus:border-white/60 focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                className="w-28 border-b border-white/20 bg-transparent py-2 font-sans text-4xl tabular-nums text-white focus:border-red-500 focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />
-              <span className="text-base text-white/40">days</span>
+              <span className="text-lg text-white/40">days</span>
             </div>
             {errors.days && <p className="mt-2 text-sm text-red-400/90">{errors.days.message}</p>}
-          </div>
+          </motion.div>
 
-          <div>
-            <label htmlFor="reason" className="block text-xs font-medium uppercase tracking-wide text-white/40">
+          <motion.div variants={item}>
+            <label htmlFor="reason" className="block text-xs font-medium uppercase tracking-widest text-white/40">
               Reason
             </label>
             <input
@@ -198,19 +248,17 @@ export function TargetTimer() {
               {...register('reason')}
               placeholder="Why does this matter to you?"
               maxLength={500}
-              className="mt-2 w-full border-b border-white/20 bg-transparent py-1.5 text-base text-text placeholder:text-white/25 focus:border-white/60 focus:outline-none"
+              className="mt-3 w-full border-b border-white/20 bg-transparent py-2 text-lg text-white placeholder:text-white/25 focus:border-red-500 focus:outline-none"
             />
             {errors.reason && <p className="mt-2 text-sm text-red-400/90">{errors.reason.message}</p>}
-          </div>
+          </motion.div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={blueClass}
-          >
-            {isSubmitting ? 'Setting target…' : 'Set target'}
-          </button>
-        </form>
+          <motion.div variants={item}>
+            <button type="submit" disabled={isSubmitting} className={blueClass}>
+              {isSubmitting ? 'Setting target…' : 'Set target'}
+            </button>
+          </motion.div>
+        </motion.form>
       )}
 
       <ConfirmDialog
