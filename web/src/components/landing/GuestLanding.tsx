@@ -134,7 +134,7 @@ export function GuestLanding({ statusIndicator }: GuestLandingProps) {
         <img
           src={fistImg}
           alt="Fist"
-          className="rotate-270 absolute -left-64 top-1/2 w-[600px] max-w-none -translate-y-1/2 rounded-2xl object-cover md:-left-45 md:w-[900px]"
+          className="rotate-270 absolute -left-64 top-1/2 w-[600px] max-w-none -translate-y-1/2 rounded-2xl object-cover blur-sm opacity-40 md:-left-45 md:w-[900px] md:blur-none md:opacity-100"
         />
 
         <div className="relative z-10 ml-auto w-full max-w-lg">
@@ -165,7 +165,7 @@ export function GuestLanding({ statusIndicator }: GuestLandingProps) {
 
       {/* CTA section */}
       <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-        <h2 className="mt-4 text-5xl font-bold leading-[1.1] text-white md:text-7xl">
+        <h2 className="mt-4 text-4xl leading-[1.1] text-white/80 border-b uppercase md:text-6xl">
           Can you challenge
           <br />
           yourself?
