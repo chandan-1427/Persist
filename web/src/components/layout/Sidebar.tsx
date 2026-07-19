@@ -57,12 +57,23 @@ export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
 
   return (
     <>
+      {/* Mobile/tablet backdrop — closes sidebar on outside click */}
+      {!collapsed && (
+        <div
+          className="fixed inset-0 z-20 bg-black/50 md:hidden"
+          onClick={toggleCollapsed}
+        />
+      )}
+
       <div
-        className={`shrink-0 overflow-hidden border-r border-white/10 transition-all duration-200 ${
-          collapsed ? 'w-0 border-r-0' : 'w-[500px]'
-        }`}
+        className={`
+          fixed inset-y-0 left-0 z-30 overflow-hidden border-r border-white/10
+          bg-black transition-all duration-200
+          md:static md:z-auto md:bg-transparent md:shrink-0
+          ${collapsed ? 'w-0 border-r-0' : 'w-full sm:w-[320px] md:w-[500px]'}
+        `}
       >
-        <div className="w-[500px] space-y-6 pr-10 pl-4 py-12 mt-5">
+        <div className="w-full sm:w-[320px] md:w-[500px] h-full space-y-6 overflow-y-auto pr-10 pl-4 py-12 mt-5">
           {description}
 
           <div className="rounded border border-white/10 bg-white/5 p-5">
@@ -94,10 +105,10 @@ export function Sidebar({ user, onSignedOut, description }: SidebarProps) {
 
       <button
         onClick={toggleCollapsed}
-        className="absolute left-3 top-3 z-20 flex h-8 w-8 
+        className="fixed left-3 top-3 z-40 flex h-8 w-8 
           items-center justify-center rounded border border-white/10 bg-white/5 
           text-white/50 hover:bg-white/10 hover:text-white/80
-          active:translate-y-px active:shadow-sm"
+          active:translate-y-px active:shadow-sm backdrop-blur-sm"
         aria-label={collapsed ? 'Open sidebar' : 'Close sidebar'}
       >
         {collapsed ? '»' : '«'}
